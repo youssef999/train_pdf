@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "925186022183",
+    "project_id": "trainpdf-13fca",
+    "storage_bucket": "trainpdf-13fca.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:925186022183:android:7fb96c459b462a2b7d6702",
+        "android_client_info": {
+          "package_name": "com.job777.trainpdf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "925186022183-gnbgpmrneegsh156glvkju64f5soc7ip.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCLzOhjdA51ZK2YdCDKl7RXov5bkZPLg_8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "925186022183-gnbgpmrneegsh156glvkju64f5soc7ip.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
