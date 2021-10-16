@@ -1,17 +1,19 @@
-
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:toggle_switch/toggle_switch.dart';
+ import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:trainpdf_app/first_screen.dart';
+
+import 'home.dart';
 
 class Steper extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return new MaterialApp(
       debugShowCheckedModeBanner:false,
-      title: 'Flutter Stepper Demo',
       theme: new ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.brown,
       ),
-      home: new MyHomePage(title: 'Stepper Tutorial'),
+      home: new MyHomePage(title: '  Application'),
     );
   }
 }
@@ -21,12 +23,29 @@ class MyHomePage extends StatefulWidget {
 
   final String title;
 
+
   @override
   _MyHomePageState createState() => new _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
 
+  DateTime date=DateTime.now();
+  Future<Null>selectTimePicker(BuildContext context)async{
+    final DateTime picked=await showDatePicker(
+      context:context,
+      initialDate:date,
+      firstDate:DateTime(2018),
+      lastDate:DateTime(2030)
+    );
+    if(picked!=null && picked !=date ){
+      setState((){
+        date=picked;
+        print(date.toString());
+       }
+      );
+    }
+  }
   int _currentStep = 0;
   String q1=' Eye and face protection, such as safety glasses, safety goggles, safety side shields, face shields and laser welding shields ';
   String q2='Hand protection, such as gloves and barrier creams';
@@ -98,7 +117,6 @@ class _MyHomePageState extends State<MyHomePage> {
   String st10q3 ='Visually inspect and clean VOIP Telephones';
   String st10q4='Visually inspect Omni switch';
   String st10q5='Visually inspect Wi-Fi devices';
-
 
 
 
@@ -284,39 +302,71 @@ class _MyHomePageState extends State<MyHomePage> {
         title: new Text(widget.title),
       ),
 
-      body: Stepper(
-        steps: _mySteps(),
-        currentStep: this._currentStep,
-        onStepTapped: (step){
-          setState(() {
-            this._currentStep = step;
-          });
-        },
-        onStepContinue: (){
-          setState(() {
-            if(this._currentStep < this._mySteps().length - 1){
-              this._currentStep = this._currentStep + 1;
-            }else{
-              //Logic to check if everything is completed
-              print('Completed, check fields.');
-            }
-          });
-        },
-        onStepCancel: () {
-          setState(() {
-            if(this._currentStep > 0){
-              this._currentStep = this._currentStep - 1;
-            }else{
-              this._currentStep = 0;
-            }
-          });
-        },
-      ),
+      body:
+      Stepper(
+       steps: _mySteps(),
+       currentStep: this._currentStep,
+       onStepTapped: (step){
+         setState(() {
+           this._currentStep = step;
+         });
+       },
+       onStepContinue: (){
+         setState(() {
+           if(this._currentStep < this._mySteps().length - 1){
+             this._currentStep = this._currentStep + 1;
+           }else{
+             //Logic to check if everything is completed
+             print('Completed, check fields.');
+           }
+         });
+       },
+       onStepCancel: () {
+         setState(() {
+           if(this._currentStep > 0){
+             this._currentStep = this._currentStep - 1;
+           }else{
+             this._currentStep = 0;
+           }
+         });
+       },
+        ),
     );
   }
 
   List<Step> _mySteps(){
     List<Step> _steps = [
+    Step(
+        title: Text(' Start Answer Questions '),
+    content:Column(
+        children:[
+          Text("Start")
+        ])),
+
+       Step(
+          title: Text(' Date '),
+          content:Column(
+              children:[
+                FlatButton(
+                   color:Colors.red,
+                  child:Text("Enter the date "),
+                  textColor:Colors.white,
+                  onPressed:(){
+                    selectTimePicker(context);
+                  }
+                ),
+                Row(
+                  children:[
+                    Text(date.day.toString()+'/'),
+
+                    Text(date.month.toString()+'/'),
+                    Text(date.year.toString()),
+                  ]
+                )
+
+              ])),
+
+
       Step(
         title: Text('FOLLOWING CHECKLIST TO USED DURING THE PPM(BUT NOT LIMITED TO  PPE Tools'),
         content:Column(
@@ -516,8 +566,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 if(index==1){
                   setState(() {
-                    value4=1;
-                    val4='Nok';
+                    value6=1;
+                    val6='Nok';
                   });
                 }
 
@@ -584,8 +634,8 @@ class _MyHomePageState extends State<MyHomePage> {
                 }
                 if(index==1){
                   setState(() {
-                    value4=1;
-                    val4='Nok';
+                    value8=1;
+                    val8='Nok';
                   });
                 }
 
@@ -1960,17 +2010,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
           ],
         ),
         isActive: _currentStep >= 1,
@@ -2104,17 +2143,6 @@ class _MyHomePageState extends State<MyHomePage> {
                 //  print('switched to: $index');
               },
             ),
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -2853,8 +2881,8 @@ class _MyHomePageState extends State<MyHomePage> {
               onToggle: (index) {
                 if(index==0){
                   setState(() {
-                    st10values2=0;
-                    st10vals2='ok';
+                    st12values3=0;
+                    st12vals3='ok';
                   });
 
                 }
@@ -3023,8 +3051,6 @@ class _MyHomePageState extends State<MyHomePage> {
         ),
         isActive: _currentStep >= 1,
       ),
-
-
 
       Step(
         title: Text('I/O Cabinet IFB 1.1 Subrack for Interface Board 3CR 01797 BAAA '),
@@ -3687,313 +3713,208 @@ class _MyHomePageState extends State<MyHomePage> {
       ),
 
       Step(
-        title: Text(' 4.1.2 Interlocking Module I/O Cabinet: 21/22   Cabinet 21 AZA 1 Subrack for Axle Counter Evaluator 3CR 01897 AAAA '),
-        content:Column(
-          children: [
-            Text(st15q1),
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values1,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 3,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values1=0;
-                    st15vals1='ok';
+       title:Text(" Saving answers "),
+          content:Column(
+            children:[
+              RaisedButton(
+                color:Colors.red,
+                child:Text("Save and Export",style:TextStyle(color:Colors.white,fontSize:17,fontWeight:FontWeight.w700),),
+                onPressed:() {
+                  FirebaseFirestore.instance.collection('Questions').document()
+                      .setData({
+                   'Date':date.day.toString()+"/"+date.month.toString()+"/"+date.year.toString(),
+                   // 'qs1': q1,
+                    'ans1': val1,
+                    //'qs2': q2,
+                    'ans2': val2,
+                   // 'qs3': q3,
+                    'ans3': val3,
+                  //  'qs4': q4,
+                    'ans4': val4,
+                   // 'qs5': q5,
+                    'ans5': val5,
+                  //  'qs6': q6,
+                    'ans6': val6,
+
+                 //   'qs7': q7,
+                    'ans7': val7,
+                 //   'qs8': q8,
+                    'ans8': val8,
+                   // 'qs9': qs1,
+                    'ans9': vals1,
+                  //  'qs10': qs2,
+                    'ans10': vals2,
+                 //   'qs11': qs3,
+                    'ans11': vals3,
+                  //  'qs12': qs4,
+                    'ans12': vals4,
+
+
+                 //   'qs13': qs5,
+                    'ans13': vals5,
+                 //   'qs14': qs6,
+                    'ans14': vals6,
+                 //   'qs15': qs7,
+                    'ans15': vals7,
+
+                  //  'qs16': st3q1,
+                    'ans16': st3values1,
+                    //'qs17': st3q2,
+                    'ans17': st3values2,
+                 //   'qs18': st3q3,
+                    'ans18': st3vals3,
+
+
+                 //   'qs19': st3q4,
+                    'ans19': st3vals4,
+
+                //    'qs20': st4q1,
+                    'ans20': st4vals1,
+                //    'qs21': st4q2,
+                    'ans21': st4vals2,
+              //      'qs22': st4q3,
+                    'ans22': st4vals3,
+               //     'qs23': st4q4,
+                    'ans23': st4vals4,
+                 //   'qs24': st4q5,
+                    'ans24': st4vals5,
+
+                //    'qs25': st4q6,
+                    'ans25': st4vals6,
+               //     'qs26': st4q7,
+                    'ans26': st4vals7,
+               //     'qs27': st4q8,
+                    'ans27': st4vals8,
+                //    'qs28': st4q9,
+                    'ans28': st4vals9,
+               //     'qs29': st5q1,
+                    'ans29': st5vals1,
+
+                //    'qs30': st5q2,
+                    'ans30': st5vals2,
+
+
+                 //   'qs31': st6q1,
+                    'ans31': st6vals1,
+                 //   'qs32': st6q2,
+                    'ans32': st6vals2,
+                 //   'qs33': st6q3,
+                    'ans33': st6vals3,
+                //    'qs34': st6q4,
+                    'ans34': st6vals4,
+                //    'qs35': st6q5,
+                    'ans35': st6vals5,
+                //    'qs36': st6q6,
+                    'ans36': st6vals6,
+               //     'qs37': st6q7,
+                    'ans37': st6vals7,
+
+
+               //     'qs38': st7q1,
+                    'ans38': st7vals1,
+               //     'qs39': st7q2,
+                    'ans39': st7vals2,
+
+                 //   'qs39': st8q1,
+                //    'ans39': st8vals1,
+                 //   'qs40': st8q2,
+                    'ans40': st8vals2,
+                 //   'qs41': st8q3,
+                    'ans41': st8vals3,
+
+
+                  //  'qs42': st9q1,
+                    'ans42': st9vals1,
+                  //  'qs43': st9q2,
+                    'ans43': st9vals2,
+                  //  'qs44': st9q3,
+                    'ans44': st9vals3,
+
+
+                 //   'qs45': st10q1,
+                    'ans45': st10vals1,
+                 //   'qs46': st10q2,
+                    'ans46': st10vals2,
+                   /// 'qs47': st10q3,
+                    'ans47': st10vals3,
+               //     'qs48': st10q4,
+                    'ans48': st10vals4,
+              //      'qs49': st10q5,
+                    'ans49': st10vals5,
+
+
+                 //   'qs50': st11q2,
+                    'ans50': st11vals1,
+                //    'qs51': st11q3,
+                    'ans51': st11vals2,
+              //      'qs52': st11q4,
+                    'ans52': st11vals3,
+              //      'qs53': st11q6,
+                    'ans53': st11vals4,
+             //       'qs54': st11q7,
+                    'ans54': st11vals5,
+
+
+              //      'qs55': st12q1,
+                    'ans55': st12vals1,
+               //     'qs56': st12q2,
+                    'ans56': st12vals2,
+               //     'qs57': st12q3,
+                    'ans57': st12vals3,
+               //     'qs58': st12q4,
+                    'ans58': st12vals4,
+              //      'qs59': st12q5,
+                    'ans59': st12vals5,
+              //      'qs60': st12q6,
+                    'ans60': st12vals6,
+
+
+               //     'qs61': st13q2,
+                    'ans61': st13vals1,
+               //     'qs62': st13q3,
+                    'ans62': st13vals2,
+               //     'qs63': st13q4,
+                    'ans63': st13vals3,
+              //      'qs64': st13q6,
+                    'ans64': st13vals4,
+             //       'qs65': st13q7,
+                    'ans65': st13vals5,
+            //        'qs66': st13q8,
+                    'ans66': st13vals6,
+
+
+           //         'qs67': st14q2,
+                    'ans67': st14vals1,
+          //          'qs68': st14q3,
+                    'ans68': st14vals2,
+          ///          'qs69': st14q4,
+                    'ans69': st14vals3,
+          //          'qs70': st14q6,
+                    'ans70': st14vals4,
+          //          'qs71': st14q7,
+                    'ans71': st14vals5,
+         //           'qs72': st14q8,
+                    'ans72': st14vals6,
+
+
                   });
+                  showDialog(
+                                context: context,
+                                builder: (_) => new AlertDialog(
+                                  title: new Text("Done "),
+                                  content: new Text("Save Data Successfully "),
+                
+                                ));
 
-                }
-                if(index==1){
-                  setState(() {
-                    st15values1=1;
-                    st15vals1='Nok';
-                  });
+                                Navigator.push(
+                           context,
+                              MaterialPageRoute(builder: (context) {
+                                return Home();
+                              }));
 
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-            SizedBox(
-                height:6
-            ),
-            Text(st15q2),
-
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values2,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 3,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values2=0;
-                    st15vals2='ok';
-                  });
-
-                }
-                if(index==1){
-                  setState(() {
-                    st15values2=1;
-                    st15vals2='Nok';
-                  });
-
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-            SizedBox(
-                height:6
-            ),
-
-            Text(st15q3),
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values3,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 3,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values3=0;
-                    st15vals3='ok';
-                  });
-
-                }
-                if(index==1){
-                  setState(() {
-                    st15values3=1;
-                    st15vals3='Nok';
-                  });
-
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-            SizedBox(
-                height:6
-            ),
-
-            Text(st15q4),
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values4,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 3,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values4=0;
-                    st15vals4='ok';
-                  });
-
-                }
-                if(index==1){
-                  setState(() {
-                    st15values4=1;
-                    st15vals4='Nok';
-                  });
-
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-
-            SizedBox(
-                height:6
-            ),
-
-            Text(st15q5),
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values5,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 3,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values5=0;
-                    st15vals5='ok';
-                  });
-
-                }
-                if(index==1){
-                  setState(() {
-                    st15values5=1;
-                    st15vals5='Nok';
-                  });
-
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-            SizedBox(
-                height:6
-            ),
-
-            Text(st15q6),
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values6,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 2,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values6=0;
-                    st15vals6='ok';
-                  });
-
-                }
-                if(index==1){
-                  setState(() {
-                    st15values6=1;
-                    st15vals6='Nok';
-                  });
-
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-
-            SizedBox(
-                height:6
-            ),
-
-            Text(st15q7),
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values7,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 2,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values7=0;
-                    st15vals7='ok';
-                  });
-
-                }
-                if(index==1){
-                  setState(() {
-                    st15values7=1;
-                    st15vals7='Nok';
-                  });
-
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-
-                        SizedBox(
-                height:6
-            ),
-
-            Text(st15q8),
-            SizedBox(
-                height:6
-            ),
-            ToggleSwitch(
-              initialLabelIndex: st15values8,
-              activeBgColor: [Colors.green],
-              activeFgColor: Colors.white,
-              inactiveBgColor: Colors.grey[300],
-              inactiveFgColor: Colors.grey[900],
-              totalSwitches: 2,
-              labels: ['Ok', 'NOK'],
-              onToggle: (index) {
-                if(index==0){
-                  setState(() {
-                    st15values8=0;
-                    st15vals8='ok';
-                  });
-
-                }
-                if(index==1){
-                  setState(() {
-                    st15values8=1;
-                    st15vals8='Nok';
-                  });
-
-                }
-
-
-                //  print('switched to: $index');
-              },
-            ),
-
-
-
-
-
-
-
-          ],
-        ),
-        isActive: _currentStep >= 1,
+                })
+            ]
+          )
       ),
 
 

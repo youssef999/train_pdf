@@ -1,126 +1,180 @@
 
 
- import 'package:flutter/material.dart';
-import 'package:path_provider/path_provider.dart';
-//import 'package:syncfusion_flutter_pdf/pdf.dart';
-import 'package:toggle_switch/toggle_switch.dart';
-//import 'package:trainpdf_app/mobile.dart';
- import 'package:trainpdf_app/pdf_page.dart';
- import 'package:pdf/pdf.dart';
- import 'package:pdf/widgets.dart' as pw;
-import 'api/pdf_api.dart';
-import 'api/pdf_invoice_api.dart';
-import 'model/invoice.dart';
-import 'second_screen.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter/material.dart';
+import 'package:trainpdf_app/app/steper.dart';
+
+
 
 class FirstScreen extends StatefulWidget {
 
+ 
+
   @override
-  _FirstScreenState createState() => _FirstScreenState();
+  _PostsScreenState createState() => _PostsScreenState();
 }
 
-class _FirstScreenState extends State<FirstScreen> {
-  String q1=' check the UPS status from the mimic panel display ';
-  String val;
-  int value=0;
+class _PostsScreenState extends State<FirstScreen> {
+  String allposts;
+
+   String v;
+   TextEditingController _searchController = TextEditingController();
+   Future resultsLoaded;
+
+
+  GlobalKey<ScaffoldState> scaffoldState = GlobalKey();
+   
+
+  @override
+  void initState() {
+    setState(() {
+  
+    });
+    super.initState();
+   
+    void showSnackBar(String content) {
+      scaffoldState.currentState.showSnackBar(
+        SnackBar(
+          content: Text(content),
+          duration: Duration(milliseconds: 1500),
+        ),
+      );
+    }
+
+  }
+
+  @override
+  void dispose() {
+  
+    super.dispose();
+
+  }
+
   @override
   Widget build(BuildContext context) {
+   
     return Scaffold(
-      appBar:AppBar(
-        backgroundColor:Colors.black54,
-        title:Center(child: Text('pdf',style:TextStyle(color:Colors.white,fontSize:21,fontWeight:FontWeight.w600))),
-      ),
-      body:Container(
-        child:ListView(
-          children:[
+      backgroundColor: Colors.grey[850],
+      appBar: AppBar(
+          backgroundColor: Colors.grey[850],
+          iconTheme: IconThemeData(color: Colors.white),
+          title:Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(colors: [
+                    Colors.grey[850],
+                    Colors.grey[850],
+                  ])),
+              height:30,
+              child: Center(
+                  child: Row(
+                    children: [
+                      SizedBox(
+                        width:20,
+                      ),
+                      Text( "App",style:TextStyle(color:Colors.white,fontWeight:FontWeight.w700,fontSize:19)),
+                     
+                    ],
+                  ))
+          ),
+          actions: <Widget>[
             SizedBox(
-              height:40
+              height:10,
             ),
-            Container(
-              child:Center(child: Text(q1,style:TextStyle(color:Colors.black,fontSize:18,fontWeight:FontWeight.w600))),
-            ),
-
-            Center(
-              child: ToggleSwitch(
-                initialLabelIndex: value,
-                activeBgColor: [Colors.green],
-                activeFgColor: Colors.white,
-                inactiveBgColor: Colors.grey[300],
-                inactiveFgColor: Colors.grey[900],
-                totalSwitches: 3,
-                labels: ['Ok', 'Nok', 'N/A'],
-                onToggle: (index) {
-                  if(index==0){
-                    setState(() {
-                      value=0;
-                      val='ok';
-                    });
-
-                  }
-                  if(index==1){
-                    setState(() {
-                      value=1;
-                      val='Nok';
-                    });
-
-                  }
-                  if(index==2){
-                    setState(() {
-                      value=2;
-                      val='N/A';
-                    });
-
-                  }
-
-                //  print('switched to: $index');
-                },
-              ),
-            ),
-            SizedBox(
-              height:30
-            ),
-            Container(
-              width:100,
-              child: RaisedButton(
-                color:Colors.black54,
-                  child:Text('save',style:TextStyle(color:Colors.white,fontSize:21,fontWeight:FontWeight.w600)),
-                  onPressed:()  async {
-
-                  
-
-                   /* final file = File('example.pdf');
-                    await file.writeAsBytes(await pdf.save());*/
-                    /*Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) {
-                          return PdfPage2(q1:q1,q2:val,v1: val,v2: 'N/A',);
-                        }));
-*/
-                  }
-                  ),
-            )
-
           ]
-        )
-      )
+      ),
+
+      body:
+          Container(
+            color: Colors.grey[850],
+            child: Column(
+                children: [
+                 
+                  SizedBox(
+                    height:7,
+                  ),
+
+                  Flexible(
+                              child: StreamBuilder(
+                                  stream:
+                                  FirebaseFirestore.instance.collection('Questions')
+                                  
+                                      .snapshots(),
+                                  builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+
+                                    final docs =snapshot.data.docs;
+                                
+                                    if (!snapshot.hasData) return Center(child: Text('Loading'));
+                                    switch (snapshot.connectionState) {
+                                      case ConnectionState.waiting:
+                                        return new Text('Loading...');
+
+                                      default:
+                                        return ListView.builder(
+                                            itemCount: snapshot.data.documents.length,
+                                            itemBuilder: (context, index) {
+                                              DocumentSnapshot posts = snapshot.data.documents[index];
+                                           
+                                              if(snapshot.data == null) return CircularProgressIndicator();
+                                         
+                                              return
+                                                 Container(
+                                                  color: Colors.grey[850],
+                                                  child: Column(
+                                                    children: <Widget>[
+                                                      Container(
+                                                        padding: EdgeInsets.all(10),
+                                                        height: 320,
+                                                      
+                                                        width: MediaQuery.of(context).size.width / 1.1,
+                                                        child: InkWell(
+                                                          child: Container(
+                                               
+                                                           
+                                                            width:200,
+                                                            child: Text(posts.data()['Date']??" ",style:TextStyle(color:Colors.black,fontSize:17,fontWeight:FontWeight.w900),),
+                                                          ),
+                                                          onTap: ()  {
+ 
+                                                          },
+                                                        ),
+                                                      ),
+                                              
+                                                    ],
+                                                  ),
+                                              );
+                                            });
+                                    }
+                                  }
+                              ),
+                            ),
+                          //),
+
+
+
+Container(
+                    color: Colors.grey[850],
+                    padding: const EdgeInsets.only(top:3),
+                    child: CurvedNavigationBar(
+                        color:Colors.white,
+                        backgroundColor: Colors.black12,
+                      
+                        items:<Widget>[
+
+                          Icon(Icons.home,size:24,color:Colors.black),
+                      
+                        ],
+
+                        animationCurve:Curves.bounceOut,
+                        onTap:(index) async {
+                         
+
+                              
+                        }
+                    ),
+                  
+             )]),
+          ),
     );
   }
-
-
-  Future<void>_createPdf()async{
-    final pdf = pw.Document();
-    pdf.addPage(pw.Page(
-        pageFormat: PdfPageFormat.a4,
-        build: (pw.Context context) {
-          return pw.Center(
-            child: pw.Text("Hello World"),
-          ); // Center
-        }
-
-        ));
-
-
-  }
-
 }
-
